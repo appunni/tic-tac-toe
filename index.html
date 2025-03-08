@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        .piece {
+            position: relative;
+        }
+
+        .piece-next-remove {
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="container mx-auto max-w-md p-8">
+        <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">Tic Tac Toe</h1>
+
+        <!-- Game Mode Selector -->
+        <div class="mb-4">
+            <label class="inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="aiMode" class="sr-only peer">
+                <div
+                    class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600">
+                </div>
+                <span class="ms-3 text-sm font-medium text-gray-900">Single Player</span>
+            </label>
+        </div>
+
+        <!-- Score Board -->
+        <div class="flex justify-between mb-8">
+            <div class="text-center">
+                <span class="text-blue-600 font-bold text-xl">Player X</span>
+                <div class="text-2xl font-bold" id="scoreX">0</div>
+            </div>
+            <div class="text-center">
+                <span class="text-red-600 font-bold text-xl">Player O</span>
+                <div class="text-2xl font-bold" id="scoreO">0</div>
+            </div>
+        </div>
+
+        <!-- Game Status -->
+        <div id="status" class="text-center mb-4 text-xl font-bold text-gray-700">
+            Player X's Turn
+        </div>
+
+        <!-- Game Board -->
+        <div class="grid grid-cols-3 gap-2 mb-8" id="board">
+            <button
+                class="cell w-full h-24 bg-white rounded-lg shadow-md text-4xl font-bold hover:bg-gray-50 transition-colors"></button>
+            <button
+                class="cell w-full h-24 bg-white rounded-lg shadow-md text-4xl font-bold hover:bg-gray-50 transition-colors"></button>
+            <button
+                class="cell w-full h-24 bg-white rounded-lg shadow-md text-4xl font-bold hover:bg-gray-50 transition-colors"></button>
+            <button
+                class="cell w-full h-24 bg-white rounded-lg shadow-md text-4xl font-bold hover:bg-gray-50 transition-colors"></button>
+            <button
+                class="cell w-full h-24 bg-white rounded-lg shadow-md text-4xl font-bold hover:bg-gray-50 transition-colors"></button>
+            <button
+                class="cell w-full h-24 bg-white rounded-lg shadow-md text-4xl font-bold hover:bg-gray-50 transition-colors"></button>
+            <button
+                class="cell w-full h-24 bg-white rounded-lg shadow-md text-4xl font-bold hover:bg-gray-50 transition-colors"></button>
+            <button
+                class="cell w-full h-24 bg-white rounded-lg shadow-md text-4xl font-bold hover:bg-gray-50 transition-colors"></button>
+            <button
+                class="cell w-full h-24 bg-white rounded-lg shadow-md text-4xl font-bold hover:bg-gray-50 transition-colors"></button>
+        </div>
+
+        <!-- Game Status and Reset -->
+        <div class="space-y-4">
+            <div id="aiStatus" class="text-sm text-gray-600 italic hidden">Thinking...</div>
+            <button id="resetBtn"
+                class="w-full py-3 bg-gray-800 text-white rounded-lg font-bold hover:bg-gray-700 transition-colors">
+                Reset Game
+            </button>
+        </div>
+    </div>
+
+    <script src="/js/game.js"></script>
+</body>
+
+</html>
