@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const evaluateMove = (index, isCapture = false) => {
+    const evaluateMove = (index) => {
         let score = 0;
         const originalValue = gameBoard[index];
         const player = 'O';
@@ -121,22 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Base position value
         score += positionValues[index] * 2;
 
-        if (isCapture) {
-            const opponentPieceAge = moveHistory[opponent].indexOf(index);
-            if (opponentPieceAge !== -1) {
-                // Strategic value of capturing pieces
-                if (opponentPieceAge === moveHistory[opponent].length - 1) {
-                    score -= 5; // Increased penalty for capturing newest piece
-                } else {
-                    // Increased preference for capturing older pieces
-                    score += (opponentPieceAge + 1) * 3;
-                }
-
-                // Add bonus for capturing strategically important positions
-                score += positionValues[index] * 1.5;
-            }
-        }
-
         // Evaluate threats and defenses
         for (const combo of winningCombos) {
             if (combo.includes(index)) {
@@ -144,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const ownPieces = others.filter(pos => gameBoard[pos] === player).length;
                 const opponentPieces = others.filter(pos => gameBoard[pos] === opponent).length;
 
-                // Increased weight for creating winning threats
+                // Weight for creating winning threats
                 score += ownPieces * 6;
 
                 // Defensive bonus for blocking opponent threats
@@ -152,24 +136,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Piece removal strategy
+        // Consider piece removal impact
         if (moveHistory[player].length >= MAX_PIECES - 1) {
-            // Check if oldest piece is in a strategic position
             const oldestPieceIndex = moveHistory[player][0];
-            if (oldestPieceIndex !== undefined) {
-                const oldestPieceValue = positionValues[oldestPieceIndex];
-                if (oldestPieceValue >= 3) {
-                    score -= 4; // Penalty for moves that force removing strategic pieces
-                }
-            }
-        }
-
-        // Look ahead for opponent's forced removals
-        if (moveHistory[opponent].length >= MAX_PIECES - 1) {
-            const opponentOldestPiece = moveHistory[opponent][0];
-            if (opponentOldestPiece !== undefined) {
-                // Bonus for moves that force opponent to remove good positions
-                score += positionValues[opponentOldestPiece] * 2;
+            if (oldestPieceIndex !== undefined && positionValues[oldestPieceIndex] >= 3) {
+                score -= 4; // Penalty for losing strategic positions
             }
         }
 
@@ -207,16 +178,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const possibleMoves = [];
         gameBoard.forEach((cell, index) => {
             if (cell === '') {
-                const moveScore = evaluateMove(index, false);
+                const moveScore = evaluateMove(index);
                 possibleMoves.push({
                     index,
                     score: moveScore + evaluateBoard('O')
-                });
-            } else if (cell === 'X') {
-                const captureScore = evaluateMove(index, true);
-                possibleMoves.push({
-                    index,
-                    score: captureScore + evaluateBoard('O')
                 });
             }
         });
@@ -245,18 +210,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleClick = (index) => {
         if (!gameActive || isAIThinking) return;
 
-        // Allow moving to an occupied space only if it's not the player's own piece
-        if (gameBoard[index] && gameBoard[index] === currentPlayer) return;
+        // Only allow moves to empty positions
+        if (gameBoard[index]) return;
 
         // Remove oldest piece if player has reached the limit
         if (moveHistory[currentPlayer].length >= MAX_PIECES) {
             removeOldestPiece(currentPlayer);
-        }
-
-        // If space is occupied by opponent, remove it from their history
-        if (gameBoard[index]) {
-            const opponent = currentPlayer === 'X' ? 'O' : 'X';
-            moveHistory[opponent] = moveHistory[opponent].filter(pos => pos !== index);
         }
 
         // Make the move
@@ -286,11 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Remove AI's oldest piece if at limit
                     if (moveHistory['O'].length >= MAX_PIECES) {
                         removeOldestPiece('O');
-                    }
-
-                    // If space is occupied by opponent, remove it from their history
-                    if (gameBoard[aiMove]) {
-                        moveHistory['X'] = moveHistory['X'].filter(pos => pos !== aiMove);
                     }
 
                     gameBoard[aiMove] = 'O';
